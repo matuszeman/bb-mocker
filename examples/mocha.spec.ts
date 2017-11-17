@@ -92,9 +92,6 @@ describe('Example: userService', () => {
       }
     });
 
-    //this.rec();
-    this.play();
-
     registeredUser = await userService.register({
       name: 'registered'
     });

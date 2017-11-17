@@ -7,26 +7,35 @@ beforeEach(function() {
   const mocker = new BbMocker();
   this.mocker = mocker;
 
-  this.mock = (mocks: any) => {
+  this.mock = (mocks: any, options?: {mode?: string}) => {
     mocker.mock({mocks});
+
+    const mode = _.get(options, 'mode', 'replay');
+    if (mode === 'replay') {
+      this.setupMocks();
+    } else if (mode === 'update') {
+      this.setupSpies();
+    } else {
+      throw new Error('Invalid setup mode: ' + mode + ', valid: update, replay');
+    }
   };
 
   const currentTest = this.currentTest;
 
-  this.play = () => {
+  this.setupMocks = () => {
     const calls = getCalls(currentTest.file, currentTest.fullTitle());
-    mocker.play({
+    mocker.setupMocks({
       calls
     });
   };
 
-  this.rec = () => {
-    mocker.rec();
+  this.setupSpies = () => {
+    mocker.setupSpies();
   };
 });
 
 afterEach(async function() {
-  const calls = await this.mocker.stop();
+  const calls = await this.mocker.teardown();
   if (calls) {
     mergeFile({
       file: getFilePath(this.currentTest.file),
@@ -34,6 +43,10 @@ afterEach(async function() {
       calls
     });
   }
+});
+
+afterEach(function() {
+  this.mocker.restore();
 });
 
 function mergeFile(params: {file: string, calls: any, key: string}) {

@@ -8,16 +8,15 @@ export class BbMocker {
   protected state = 'stopped';
   protected recordingMocks = {} as any;
 
-  constructor() {
-
-  }
-
   mock(params:{mocks: any}) {
-    //TODO check if mocks is registered already
+    const existing = _.intersection(_.keys(this.mocks), _.keys(params.mocks));
+    if (existing.length !== 0) {
+      throw new Error('Already registered mocks: ' + existing.join(', '));
+    }
     _.merge(this.mocks, params.mocks);
   }
 
-  rec() {
+  setupSpies() {
     if (this.state !== 'stopped') {
       throw new Error('Not stopped');
     }
@@ -31,7 +30,7 @@ export class BbMocker {
       }
 
       if (mock.calls) {
-        throw new Error('Mock has got calls defined - can not record');
+        throw new Error('Mock has got calls defined');
       }
 
       const methodSpy = this.sandbox.spy(mock.obj, mock.method);
@@ -43,7 +42,7 @@ export class BbMocker {
     }
   }
 
-  play(params: {calls: any}) {
+  setupMocks(params: {calls: any}) {
     if (this.state !== 'stopped') {
       throw new Error('Not stopped');
     }
@@ -92,13 +91,15 @@ export class BbMocker {
     }
   }
 
-  async stop() {
+  async teardown() {
     if (this.state === 'stopped') {
       return;
     }
 
     //play - verify only
     if (this.state === 'playing') {
+      //TODO sinon mocks did not work - had to use stubs,
+      // but we need to verify called args
       this.sandbox.verifyAndRestore();
       this.state = 'stopped';
       return;
@@ -139,8 +140,13 @@ export class BbMocker {
     }
 
     this.sandbox.verifyAndRestore();
+    this.state = 'stopped';
 
     return mocks;
+  }
+
+  restore() {
+    this.sandbox.restore();
   }
 }
 
