@@ -1,0 +1,31 @@
+{
+  "name": "@kapitchi/bb-mocker",
+  "version": "0.1.0",
+  "description": "Mocking tool to help out with e2e and unit testing",
+  "main": "es6/index.js",
+  "scripts": {
+    "build-ts": "tsc",
+    "build:watch": "tsc --watch",
+    "test": "mocha 'es6/src/**/*.spec.js' 'es6/examples/**/*.spec.js'",
+    "test:watch": "mocha --watch 'es6/src/**/*.spec.js' 'es6/examples/**/*.spec.js'"
+  },
+  "author": "Matus Zeman <matus.zeman@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "@types/chai": "^4.0.5",
+    "@types/lodash": "^4.14.85",
+    "@types/node": "^8.0.53",
+    "@types/sinon": "^4.0.0",
+    "sinon": "^4.1.2"
+  },
+  "devDependencies": {
+    "@types/mocha": "^2.2.44",
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "errio": "^1.2.2",
+    "lodash": "^4.17.4",
+    "mocha": "^4.0.1",
+    "source-map-support": "^0.5.0",
+    "typescript": "^2.6.1"
+  }
+}
